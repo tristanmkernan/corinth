@@ -1,0 +1,86 @@
+<div>
+  <.form
+  let={f}
+  for={@changeset}
+  phx-target={@myself}
+  phx-change="validate"
+  phx-submit="save">
+
+  <%= hidden_input f, :user_id, value: @current_user.id %>
+  
+  <div class="field">
+    <label class="label">Name</label>
+    <div class="control">
+      <%= text_input f, :title, class: "input", placeholder: "Calculus homework assignment" %>
+    </div>
+    <%= error_tag f, :title %>
+  </div>
+
+  <div class="tabs">
+    <ul>
+      <.tab_header is_active={@current_tab == :text} icon="fas fa-book" title="Text" tab_id="text" myself={@myself}/>
+
+      <.tab_header is_active={@current_tab == :urls} icon="fas fa-link" title="URLs" tab_id="urls" myself={@myself}/>
+
+      <.tab_header is_active={@current_tab == :files} icon="fas fa-file" title="Files" tab_id="files" myself={@myself}/>
+    </ul>
+  </div>
+
+  <%= case @current_tab do %>
+    <% :text -> %>
+      <div class="field">
+        <textarea class="textarea" placeholder="C-c, C-v"></textarea>
+      </div>
+      <div class="field">
+        <textarea class="textarea" placeholder="C-c, C-v"></textarea>
+      </div>
+      <div class="field">
+        <button type="button" class="button">
+          Attach document
+        </button>
+      </div>
+      <% :urls -> %>
+        <div class="field">
+          <input class="input" type="url" placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+        </div>
+        <div class="field">
+          <input class="input" type="url" placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+        </div>
+        <div class="field">
+          <button type="button" class="button">
+            Attach URL
+          </button>
+        </div>
+        <% :files -> %>
+          <div class="field">
+            <div class="file has-name is-fullwidth">
+              <label class="file-label">
+                <input class="file-input" type="file" name="resume">
+                <span class="file-cta">
+                  <span class="file-icon">
+                    <i class="fas fa-upload"></i>
+                  </span>
+                  <span class="file-label">
+                    Choose a file…
+                  </span>
+                </span>
+                <span class="file-name">
+                  Screen Shot 2017-07-29 at 15.54.25.png
+                </span>
+              </label>
+            </div>
+          </div>
+          <div class="field">
+            <button type="button" class="button">
+              Attach file
+            </button>
+          </div>
+        <% end %>
+
+        <div class="field">
+          <button type="submit" class="button is-primary">
+            Create
+          </button>
+        </div>
+        </.form>
+</div>

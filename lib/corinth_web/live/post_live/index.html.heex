@@ -1,0 +1,101 @@
+<section class="hero is-small">
+  <div class="hero-body">
+    <p class="title">
+      Your feed
+    </p>
+    <p class="subtitle">
+      Don't worry, we'll remember it for you wholesale.
+    </p>
+    <div class="my-2">
+      <%= live_patch to: Routes.post_index_path(@socket, :new), class: "button is-primary" do %>
+        <span>Create</span>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <%= for post <- @posts do %>
+    <nav class="panel">
+      <div class="panel-heading is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center">
+        <span><%= post.title %></span>
+        <div class="buttons are-small">
+          <button class="button is-info">
+            <span class="icon">
+              <i class="fa-solid fa-pen"></i>
+            </span>
+          </button>
+          <button class="button is-danger">
+            <span class="icon">
+              <i class="fa-solid fa-trash"></i>
+            </span>
+          </button>
+        </div>
+      </div>
+      <%= for text_attachment <- post.text_attachments do %>
+        <div class="panel-block">
+          <span class="panel-icon">
+            <i class="fas fa-book" aria-hidden="true"></i>
+          </span>
+          <%= text_attachment.content %>
+        </div>
+      <% end %>
+      <%= for url_attachment <- post.url_attachments do %>
+        <a class="panel-block"
+           target="_blank"
+           href={url_attachment.url}>
+          <span class="panel-icon">
+            <i class="fas fa-link" aria-hidden="true"></i>
+          </span>
+          <%= url_attachment.url %>
+        </a>
+      <% end %>
+      <%= for file_attachment <- post.file_attachments do %>
+        <a class="panel-block"
+           target="_blank"
+           href={file_attachment.location}>
+          <span class="panel-icon">
+            <i class="fas fa-file" aria-hidden="true"></i>
+          </span>
+          <%= file_attachment.name %>
+        </a>
+      <% end %>
+    </nav>
+  <% end %>
+</section>
+
+<h1>Listing Posts</h1>
+
+<%= if @live_action in [:new, :edit] do %>
+  <%= live_modal CorinthWeb.PostLive.FormComponent,
+  id: @post.id || :new,
+  title: @page_title,
+  action: @live_action,
+  post: @post,
+  current_user: @current_user,
+  return_to: Routes.post_index_path(@socket, :index)
+  %>
+<% end %>
+
+<table>
+  <thead>
+    <tr>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="posts">
+    <%= for post <- @posts do %>
+      <tr id={"post-#{post.id}"}>
+
+        <td>
+          <span><%= live_redirect "Show", to: Routes.post_show_path(@socket, :show, post) %></span>
+          <span><%= live_patch "Edit", to: Routes.post_index_path(@socket, :edit, post) %></span>
+          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: post.id, data: [confirm: "Are you sure?"] %></span>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<span><%= live_patch "New Post", to: Routes.post_index_path(@socket, :new) %></span>

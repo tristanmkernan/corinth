@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <%= csrf_meta_tag() %>
+    <%= live_title_tag assigns[:page_title] || "Corinth", suffix: " · Phoenix Framework" %>
+    <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")}/>
+    <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
+    <script src="https://kit.fontawesome.com/83e7cee171.js" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+      <div class="container">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="/">
+            <img src="https://via.placeholder.com/112x28" width="112" height="28">
+          </a>
+
+          <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </a>
+        </div>
+
+        <div id="navbarBasicExample" class="navbar-menu">
+          <div class="navbar-start">
+            <a class="navbar-item">
+              Github
+            </a>
+          </div>
+
+          <div class="navbar-end">
+            <div class="navbar-item">
+              <div class="buttons">
+                <%= if @current_user do %>
+                  <%= link to: Routes.post_index_path(@conn, :index), class: "button is-light" do %>
+                    <i class="fa-solid fa-house-user"></i>
+                    <span class="ml-2">Home</span>
+                  <% end %>
+                  <%= link to: Routes.user_settings_path(@conn, :edit), class: "button is-light" do %>
+                    <i class="fa-solid fa-gears"></i>
+                    <span class="ml-2"><%= @current_user.email %></span>
+                  <% end %>
+                  <%= link to: Routes.user_session_path(@conn, :delete), method: :delete, class: "button is-danger" do %>
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span class="ml-2">Log out</span>
+                  <% end %>
+                <% else %>
+                  <%= link to: Routes.user_registration_path(@conn, :new), class: "button is-primary" do %>
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span class="ml-2">Register</span>
+                  <% end %>
+                  <%= link to: Routes.user_session_path(@conn, :new), class: "button is-light" do %>
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    <span class="ml-2">Log in</span>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <%= @inner_content %>
+    <footer class="footer">
+      <div class="content has-text-centered">
+        <p>
+          <strong>Corinth</strong> by <a href="https://www.tmk.name">Tristan</a>. The source code is licensed
+          <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
+          is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
