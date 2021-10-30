@@ -8,11 +8,7 @@ defmodule CorinthWeb.UserLiveAuth do
 
     socket = assign_new(socket, :current_user, fn -> user end)
 
-    if socket.assigns.current_user.confirmed_at do
-      {:cont, socket}
-    else
-      {:halt, redirect(socket, to: "/login")}
-    end
+    {:cont, socket}
   end
 
   def on_mount(:default, _params, _session, socket) do
