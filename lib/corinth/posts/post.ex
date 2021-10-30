@@ -18,5 +18,8 @@ defmodule Corinth.Posts.Post do
     post
     |> cast(attrs, [:user_id, :title])
     |> validate_required([:user_id, :title])
+    |> cast_assoc(:text_attachments)
+    |> cast_assoc(:url_attachments)
+    |> cast_assoc(:file_attachments)
   end
 end

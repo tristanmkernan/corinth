@@ -227,7 +227,10 @@ defmodule Corinth.Attachments do
       ** (Ecto.NoResultsError)
 
   """
-  def get_file_attachment!(id), do: Repo.get!(FileAttachment, id)
+  def get_file_attachment!(id) do
+    Repo.get!(FileAttachment, id)
+    |> Repo.preload(:post)
+  end
 
   @doc """
   Creates a file_attachment.

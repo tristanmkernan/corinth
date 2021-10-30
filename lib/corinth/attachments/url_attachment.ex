@@ -4,7 +4,7 @@ defmodule Corinth.Attachments.UrlAttachment do
 
   schema "url_attachments" do
     field :url, :string
-    field :post_id, :id
+    belongs_to :post, Corinth.Posts.Post
 
     timestamps()
   end
@@ -12,7 +12,7 @@ defmodule Corinth.Attachments.UrlAttachment do
   @doc false
   def changeset(url_attachment, attrs) do
     url_attachment
-    |> cast(attrs, [:url, :post_id])
-    |> validate_required([:url, :post_id])
+    |> cast(attrs, [:url])
+    |> validate_required([:url])
   end
 end

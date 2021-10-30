@@ -6,8 +6,6 @@
   phx-change="validate"
   phx-submit="save">
 
-  <%= hidden_input f, :user_id, value: @current_user.id %>
-  
   <div class="field">
     <label class="label">Name</label>
     <div class="control">
@@ -18,69 +16,110 @@
 
   <div class="tabs">
     <ul>
-      <.tab_header is_active={@current_tab == :text} icon="fas fa-book" title="Text" tab_id="text" myself={@myself}/>
-
-      <.tab_header is_active={@current_tab == :urls} icon="fas fa-link" title="URLs" tab_id="urls" myself={@myself}/>
-
-      <.tab_header is_active={@current_tab == :files} icon="fas fa-file" title="Files" tab_id="files" myself={@myself}/>
+      <li id="tabs--header--text" class="tabs--header is-active">
+        <a phx-click={change_tab("text")}>
+          <span class="icon is-small"><i class='fas fa-book' aria-hidden="true"></i></span>
+          <span>Text</span>
+        </a>
+      </li>
+      <li id="tabs--header--urls" class="tabs--header">
+        <a phx-click={change_tab("urls")}>
+          <span class="icon is-small"><i class='fas fa-link' aria-hidden="true"></i></span>
+          <span>URLs</span>
+        </a>
+      </li>
+      <li id="tabs--header--files" class="tabs--header">
+        <a phx-click={change_tab("files")}>
+          <span class="icon is-small"><i class='fas fa-file' aria-hidden="true"></i></span>
+          <span>Files</span>
+        </a>
+      </li>
     </ul>
   </div>
 
-  <%= case @current_tab do %>
-    <% :text -> %>
+  <div id="tabs--content--text" class="tabs--content">
+    <%= inputs_for f, :text_attachments, fn text_f -> %>
       <div class="field">
-        <textarea class="textarea" placeholder="C-c, C-v"></textarea>
+        <%= textarea text_f, :content, class: "textarea", placeholder: "C-c, C-v" %>
+        <%= error_tag text_f, :content %>
       </div>
-      <div class="field">
-        <textarea class="textarea" placeholder="C-c, C-v"></textarea>
-      </div>
-      <div class="field">
-        <button type="button" class="button">
-          Attach document
-        </button>
-      </div>
-      <% :urls -> %>
-        <div class="field">
-          <input class="input" type="url" placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
-        </div>
-        <div class="field">
-          <input class="input" type="url" placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
-        </div>
-        <div class="field">
-          <button type="button" class="button">
-            Attach URL
-          </button>
-        </div>
-        <% :files -> %>
-          <div class="field">
-            <div class="file has-name is-fullwidth">
-              <label class="file-label">
-                <input class="file-input" type="file" name="resume">
-                <span class="file-cta">
-                  <span class="file-icon">
-                    <i class="fas fa-upload"></i>
-                  </span>
-                  <span class="file-label">
-                    Choose a file…
-                  </span>
-                </span>
-                <span class="file-name">
-                  Screen Shot 2017-07-29 at 15.54.25.png
-                </span>
-              </label>
-            </div>
-          </div>
-          <div class="field">
-            <button type="button" class="button">
-              Attach file
-            </button>
-          </div>
-        <% end %>
+    <% end %>
+    <div class="field">
+      <button type="button"
+              class="button"
+              phx-target={@myself}
+              phx-click="add_text">
+        Attach document
+      </button>
+    </div>
+  </div>
 
-        <div class="field">
-          <button type="submit" class="button is-primary">
-            Create
-          </button>
-        </div>
-        </.form>
+  <div id="tabs--content--urls" class="tabs--content is-hidden">
+    <%= inputs_for f, :url_attachments, fn url_f -> %>
+      <div class="field">
+        <%= text_input url_f, :url, class: "input", placeholder: "https://www.youtube.com/watch?v=dQw4w9WgXcQ" %>
+        <%= error_tag url_f, :url %>
+      </div>
+    <% end %>
+    <div class="field">
+      <button type="button"
+              class="button"
+              phx-target={@myself}
+              phx-click="add_url">
+        Attach URL
+      </button>
+    </div>
+  </div>
+
+  <div id="tabs--content--files"
+       class="tabs--content is-hidden">
+
+    <%= if Enum.count(@uploads.files.entries) > 0 do %>
+      <div class="panel">
+        <%= for entry <- @uploads.files.entries do %>
+          <%= if entry.progress < 100 do %>
+            <div class="panel-block">
+              <progress class="progress" value={entry.progress} max="100"><%= entry.progress %></progress>
+            </div>
+          <% else %>
+            <div class="panel-block is-flex is-justify-content-space-between">
+              <span><%= entry.client_name %></span>
+              <button class="delete is-small"
+                      phx-click="cancel-upload" phx-value-ref={entry.ref} aria-label="cancel"></button>
+            </div>
+          <% end %>
+        <%= end %>
+      </div>
+    <% end %>
+
+    <!-- TODO -->
+    <%= for entry <- @uploads.files.entries do %>
+      <%= for err <- upload_errors(@uploads.files, entry) do %>
+        <p class="alert alert-danger"><%= error_to_string(err) %></p>
+      <% end %>
+    <% end %>
+
+    <div class="field">
+      <div class="file is-boxed">
+        <label class="file-label">
+          <%= live_file_input @uploads.files, class: "file-input" %>
+          <span class="file-cta">
+            <span class="file-icon">
+              <i class="fas fa-upload"></i>
+            </span>
+            <span class="file-label">
+              Choose file(s)
+            </span>
+          </span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="field mt-2">
+    <button type="submit" class="button is-primary">
+      Save
+    </button>
+  </div>
+  </.form>
 </div>

@@ -4,7 +4,8 @@ defmodule Corinth.Attachments.TextAttachment do
 
   schema "text_attachments" do
     field :content, :string
-    field :post_id, :id
+
+    belongs_to :post, Corinth.Posts.Post
 
     timestamps()
   end
@@ -12,7 +13,7 @@ defmodule Corinth.Attachments.TextAttachment do
   @doc false
   def changeset(text_attachment, attrs) do
     text_attachment
-    |> cast(attrs, [:content, :post_id])
-    |> validate_required([:content, :post_id])
+    |> cast(attrs, [:content])
+    |> validate_required([:content])
   end
 end

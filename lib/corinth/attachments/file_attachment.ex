@@ -5,7 +5,7 @@ defmodule Corinth.Attachments.FileAttachment do
   schema "file_attachments" do
     field :name, :string
     field :location, :string
-    field :post_id, :id
+    belongs_to :post, Corinth.Posts.Post
 
     timestamps()
   end
@@ -13,7 +13,7 @@ defmodule Corinth.Attachments.FileAttachment do
   @doc false
   def changeset(file_attachment, attrs) do
     file_attachment
-    |> cast(attrs, [:location, :name, :post_id])
-    |> validate_required([:location, :name, :post_id])
+    |> cast(attrs, [:location, :name])
+    |> validate_required([:location, :name])
   end
 end

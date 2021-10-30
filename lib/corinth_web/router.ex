@@ -85,9 +85,16 @@ defmodule CorinthWeb.Router do
     live "/posts/", PostLive.Index, :index
     live "/posts/new", PostLive.Index, :new
     live "/posts/:id/edit", PostLive.Index, :edit
+    live "/posts/:id/delete", PostLive.Index, :delete
 
     live "/posts/:id", PostLive.Show, :show
     live "/posts/:id/show/edit", PostLive.Show, :edit
+  end
+
+  scope "/", CorinthWeb do
+    pipe_through [:browser, :require_authenticated_user]
+
+    resources "/attachments/files/", FileAttachmentController, only: [:show]
   end
 
   scope "/", CorinthWeb do

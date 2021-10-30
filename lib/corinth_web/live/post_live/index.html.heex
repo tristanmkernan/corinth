@@ -19,17 +19,21 @@
     <nav class="panel">
       <div class="panel-heading is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center">
         <span><%= post.title %></span>
-        <div class="buttons are-small">
-          <button class="button is-info">
+        <div>
+        <%= live_patch to: Routes.post_index_path(@socket, :edit, post) do %>
+          <button class="button is-info is-small">
             <span class="icon">
               <i class="fa-solid fa-pen"></i>
             </span>
           </button>
-          <button class="button is-danger">
+        <% end %>
+        <%= live_patch to: Routes.post_index_path(@socket, :delete, post) do %>
+          <button class="button is-danger is-small">
             <span class="icon">
               <i class="fa-solid fa-trash"></i>
             </span>
           </button>
+        <% end %>
         </div>
       </div>
       <%= for text_attachment <- post.text_attachments do %>
@@ -53,7 +57,7 @@
       <%= for file_attachment <- post.file_attachments do %>
         <a class="panel-block"
            target="_blank"
-           href={file_attachment.location}>
+           href={Routes.file_attachment_path(@socket, :show, file_attachment.id)}>
           <span class="panel-icon">
             <i class="fas fa-file" aria-hidden="true"></i>
           </span>
@@ -63,8 +67,6 @@
     </nav>
   <% end %>
 </section>
-
-<h1>Listing Posts</h1>
 
 <%= if @live_action in [:new, :edit] do %>
   <%= live_modal CorinthWeb.PostLive.FormComponent,
@@ -77,25 +79,12 @@
   %>
 <% end %>
 
-<table>
-  <thead>
-    <tr>
-
-      <th></th>
-    </tr>
-  </thead>
-  <tbody id="posts">
-    <%= for post <- @posts do %>
-      <tr id={"post-#{post.id}"}>
-
-        <td>
-          <span><%= live_redirect "Show", to: Routes.post_show_path(@socket, :show, post) %></span>
-          <span><%= live_patch "Edit", to: Routes.post_index_path(@socket, :edit, post) %></span>
-          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: post.id, data: [confirm: "Are you sure?"] %></span>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<span><%= live_patch "New Post", to: Routes.post_index_path(@socket, :new) %></span>
+<%= if @live_action == :delete do %>
+  <%= live_modal CorinthWeb.PostLive.DeleteComponent,
+  id: @post.id,
+  title: @page_title,
+  post: @post,
+  current_user: @current_user,
+  return_to: Routes.post_index_path(@socket, :index)
+  %>
+  <% end %>
